@@ -1,0 +1,16 @@
+.env
+**/bin/
+**/obj/
+**/logs/
+**/node_modules/
+**/dist/
+**/.angular/
+**/out-tsc/
+**/test-results/
+**/playwright-report/
+.vs/
+.idea/
+*.user
+.DS_Store
+**/__pycache__/
+*.pyc
