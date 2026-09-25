@@ -46,20 +46,11 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 builder.Services.AddRateLimiter(options =>
 {
-    options.RejectionStatusCode = 429;
-
-    options.AddFixedWindowLimiter("login", x =>
+    options.AddFixedWindowLimiter("fixed", limiterOptions =>
     {
-        x.PermitLimit = 20;
-        x.Window = TimeSpan.FromMinutes(1);
-        x.QueueLimit = 0;
-    });
-
-    options.AddFixedWindowLimiter("client-logs", x =>
-    {
-        x.PermitLimit = 120;
-        x.Window = TimeSpan.FromMinutes(1);
-        x.QueueLimit = 0;
+        limiterOptions.PermitLimit = 100;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
     });
 });
 builder.Services.AddEndpointsApiExplorer();
