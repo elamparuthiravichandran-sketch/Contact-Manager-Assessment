@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,9 +47,20 @@ builder.Services.AddAuthorization();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = 429;
-    // Per-application budgets suit this single-reviewer demo; use distributed per-user limits at scale.
-    options.AddFixedWindowLimiter("login", x => { x.PermitLimit = 20; x.Window = TimeSpan.FromMinutes(1); x.QueueLimit = 0; });
-    options.AddFixedWindowLimiter("client-logs", x => { x.PermitLimit = 120; x.Window = TimeSpan.FromMinutes(1); x.QueueLimit = 0; });
+
+    options.AddFixedWindowLimiter("login", x =>
+    {
+        x.PermitLimit = 20;
+        x.Window = TimeSpan.FromMinutes(1);
+        x.QueueLimit = 0;
+    });
+
+    options.AddFixedWindowLimiter("client-logs", x =>
+    {
+        x.PermitLimit = 120;
+        x.Window = TimeSpan.FromMinutes(1);
+        x.QueueLimit = 0;
+    });
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
